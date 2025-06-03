@@ -8,4 +8,4 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #Executable
-add_executable(main main.cpp hero.hpp enemy.hpp displays.hpp caveFactory.hpp)
+add_executable(main main.cpp hero.hpp enemy.hpp displays.hpp caveFactory.hpp weapon.hpp)

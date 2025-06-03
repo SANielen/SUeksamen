@@ -202,5 +202,6 @@ CMakeFiles/main.dir/main.cpp.o: \
  /usr/include/c++/11/ext/aligned_buffer.h \
  /usr/include/c++/11/bits/fs_dir.h /usr/include/c++/11/bits/fs_ops.h \
  /home/sammy/Desktop/SUeksamen/SUeksamen/enemy.hpp \
+ /home/sammy/Desktop/SUeksamen/SUeksamen/caveFactory.hpp \
  /usr/include/c++/11/thread /usr/include/c++/11/bits/std_thread.h \
  /usr/include/c++/11/bits/this_thread_sleep.h
