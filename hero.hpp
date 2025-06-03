@@ -61,6 +61,29 @@ public:
         return heroXP;
     }
 
+    void resetHeroHealth(){
+        heroHP = getMaxHP();
+    }
+
+    bool saveHero() {
+    std::string folder = "saves";
+    std::filesystem::create_directory(folder);
+
+    std::string filename = folder + "/" + heroName + ".txt";
+    std::ofstream saveFile(filename);
+
+    if (saveFile.is_open()) {
+        saveFile << heroName << "\n";
+        saveFile << heroXP << "\n";
+        saveFile << heroLvl << "\n";
+        saveFile.close();
+        return true;
+    } else {
+        //std::cerr << "Error: Could not save hero data to " << filename << "\n";
+        return false;
+    }
+    };
+
     bool loadHero(std::string loadName) {
     std::string filename = "saves/" + loadName + ".txt";
     std::ifstream loadFile(filename);

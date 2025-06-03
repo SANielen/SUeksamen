@@ -1,9 +1,22 @@
 #inlcude <iostream>
 #include "displays.hpp"
 #include "hero.hpp"
+#include "enemy.hpp"
 
 displays menu;
 hero player;
+
+//Creating enemylist using a vectorlist.
+std::vector<enemy> enemyList = {
+    enemy("Hest", 1, 4, 100),//                 [0]
+    enemy("Weak Goblin", 2, 4, 200),//          [1]
+    enemy("Strong Goblin", 3, 8, 400),//        [2]
+    enemy("Stronger Goblin", 4, 10, 500),//     [3]
+    enemy("Den stærkeste Goblin", 5, 15, 800),//[4]
+    enemy("Abe Kongen", 5, 30, 1000),//         [5]
+    enemy("Enhjørning", 8, 5, 1500),//          [6]
+    enemy("Drage", 10, 100, 3000)//             [7]
+};
 
 int selection;
 bool running = true;
@@ -28,6 +41,66 @@ bool load(){
         }
     };
     return true;
+}
+
+void pause(){
+    bool pauseRun = true;
+    while (pauseRun){
+    menu.pauseMenu();    
+    std::cin >> selection;
+        switch (selection){
+            case 1:                     //Resume
+            {
+                return;
+            }
+            case 2:                     //Save Game
+            {
+                if (!player.saveHero()){
+                    menu.saveFailedScreen();
+                    std::this_thread::sleep_for(std::chrono::seconds(3));
+                    continue;
+                } else {
+                    menu.saveScreen();
+                    std::this_thread::sleep_for(std::chrono::seconds(3));
+                    pauseRun = false;
+                    break;
+                }
+            } 
+            case 3:                     //Load Game
+            {
+                if (load()){
+                    pauseRun = false;
+                }
+                continue;
+            }              
+            case 0:                     //Exit the game
+            {
+                exit(0);
+            }
+        }
+    }
+    return;
+};
+
+void fightMonsters() {
+    bool fightRun = true;
+    while (fightRun) {
+        menu.fightMonsters(enemyList);
+        std::cin >> selection;
+        if (selection == 0) {
+            return;
+        }
+
+        if (selection > 0 && selection < enemyList.size()) {
+            //Calling a copy constructor during initialization
+            enemy chosenEnemy = enemyList[selection - 1];
+
+            battle(player, chosenEnemy);
+            fightRun = false;
+        } else {
+            continue;
+        }
+    }
 }
 
 int main(){
@@ -76,7 +149,8 @@ int main(){
         {
             case 1:
             {
-                /*Awaits implementation*/
+                fightMonsters();
+                continue;
             }
                 
             case 0:
