@@ -1,8 +1,8 @@
-#inlcude <iostream>
+#include <iostream>
+#include <string>
 #include "displays.hpp"
 #include "hero.hpp"
 #include "enemy.hpp"
-
 displays menu;
 hero player;
 
@@ -42,7 +42,7 @@ bool load(){
     };
     return true;
 }
-
+    
 void pause(){
     bool pauseRun = true;
     while (pauseRun){
@@ -82,6 +82,64 @@ void pause(){
     return;
 };
 
+void postFight(bool battleWon, hero& player, enemy foe){
+    if(battleWon){
+        menu.battleWon(foe);
+        player.addXP(foe.getEnemyXP());
+        player.getXP();
+        player.resetHeroHealth();
+    } else {
+        menu.battleLost(foe);
+    }
+}
+
+void battle(hero& player, enemy foe){
+    bool battleRun = true;
+    bool battleWon = false;
+
+    while (battleRun)
+    {
+        //Updating player and foe stats
+        int heroDmg = player.getHeroDmg();
+        int heroHP = player.getHeroHP();
+        int enemyDmg = foe.getEnemyDmg();
+        int enemyHP = foe.getEnemyHP();
+        menu.battleMenu(player, foe);
+        std::cin >> selection;
+        switch (selection)
+        {
+        case 1:                         //Attack
+            foe.takeDamage(player.getHeroDmg());
+            if (foe.getEnemyHP() <= 0){
+                battleWon = true;
+                    battleRun = false;
+            };
+
+            player.takeDamage(foe.getEnemyDmg());
+            if (player.getHeroHP() <= 0) {
+                    battleWon = false;
+                    battleRun = false;
+            };
+
+            continue;
+        case 2:                         //Flee
+            battleRun = false;
+            continue;
+        case 3:                         //Do nothing (This is for debugging)
+            player.takeDamage(foe.getEnemyDmg());
+            if (player.getHeroHP() <= 0) {
+                    battleWon = false;
+                    battleRun = false;
+            };
+            continue;
+        default:
+            continue;
+        }
+    }
+    postFight(battleWon, player, foe);
+    return;
+}
+
 void fightMonsters() {
     bool fightRun = true;
     while (fightRun) {
@@ -103,8 +161,10 @@ void fightMonsters() {
     }
 }
 
-int main(){
-	//Startup of the game
+int main(int argc, char *argv[])
+{
+    
+    //Startup of the game
     while (running)
     {
         menu.bootMenu();
@@ -123,7 +183,7 @@ int main(){
             }
             case 2:
             {
-		if (load()){
+                if (load()){
                     running = false;
                 }
                 break;
@@ -139,6 +199,7 @@ int main(){
         };
     }
     
+
     //Playing game
     running = true;
     while (running)
@@ -162,4 +223,9 @@ int main(){
                 continue;
         }
     }
+    
+    
+
+    return 0;
 }
+
