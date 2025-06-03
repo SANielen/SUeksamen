@@ -1,0 +1,3 @@
+/home/sammy/Desktop/SUeksamen/SUeksamen/build/CMakeFiles/main.dir
+/home/sammy/Desktop/SUeksamen/SUeksamen/build/CMakeFiles/edit_cache.dir
+/home/sammy/Desktop/SUeksamen/SUeksamen/build/CMakeFiles/rebuild_cache.dir
