@@ -20,6 +20,19 @@ std::vector<enemy> enemyList = {
     enemy("Balrog", 10, 100, 3000)//             [7]
 };
 
+//Creating the loot(weapons)
+weapon getRandomWeapon() {
+    std::vector<weapon> loot = {
+        weapon("Kniv", 5, 0, 20),
+        weapon("Pind", 0, 1, 10),
+        weapon("Metalreor", 0, 2, 20),
+        weapon("Svaerd", 20, 1, 30),
+        weapon("Morgenstjerne", 10, 3, 40)
+    };
+    return loot[rand() % loot.size()];
+}
+
+
 int selection;
 bool running = true;
 
@@ -107,6 +120,7 @@ bool battle(hero& player, enemy foe) {
 
         switch (selection) {
             case 1: // Attack
+                player.useWeapon();
                 foe.takeDamage(player.getHeroDmg());
                 if (foe.getEnemyHP() <= 0) {
                     battleWon = true;
@@ -193,10 +207,17 @@ void enterCave() {
                     break;
                 }
             }
-
             if (cleared) {
                 player.addGold(chosen.goldReward);
-                menu.caveWon(chosen);
+                weapon loot = getRandomWeapon();
+                if (player.getWeapon().isBroken())
+                {
+                    player.equipWeapon(loot);
+                    menu.caveWon2(chosen, loot);
+                } else {
+                    menu.caveWon1(chosen);
+                }
+                
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
 
