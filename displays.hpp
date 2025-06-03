@@ -116,6 +116,8 @@ void mainMenu(hero player){
           << player.getXP() << " XP | "
           << "Gold: " << player.getGold() << " | "
           << "Level: " << player.getLvl() << std::endl;
+    std::cout << " current weapon: " << player.getWeapon().getName()
+    << " (Durability: " << player.getWeapon().getDurability() << ")" << std::endl;
     std::cout << "(1) Fight monsters" << std::endl;
     std::cout << "(2) Enter Cave" << std::endl;
     std::cout << "(0) Pause Menu" << std::endl;
@@ -179,13 +181,21 @@ void battleWon(enemy foe){
     std::cout << " " << std::endl;
     std::cout << "--------------" << std::endl;
 };
-void caveWon(Cave cave){
+void caveWon1(Cave cave){
+    std::cout << "--------------" << std::endl;
+    std::cout << " " << std::endl;
+    std::cout << "    CONGRATS   " << std::endl;
+    std::cout << "You cleared the cave! " << cave.name << std::endl;
+    std::cout << " " << std::endl;
+    std::cout << "--------------" << std::endl;
+};
+void caveWon2(Cave cave, weapon foundWeapon){
     std::cout << "--------------" << std::endl;
     std::cout << " " << std::endl;
     std::cout << "    CONGRATS   " << std::endl;
     std::cout << "You cleared the cave! " << cave.name 
     << " Earning: " << cave.goldReward << " Gold" << std::endl;
-    std::cout << " " << std::endl;
+    std::cout << "You have found a: " << foundWeapon.getName() << std::endl;
     std::cout << "--------------" << std::endl;
 };
 void battleLost(enemy foe){
