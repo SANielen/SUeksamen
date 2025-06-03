@@ -4,6 +4,7 @@
 #include <fstream>  //Save functions
 #include <sstream>  //Load functions
 #include <filesystem> //Creates save folder
+#include "weapon.hpp"
 
 class hero{
 
@@ -45,8 +46,26 @@ public:
         return heroHP;
     }
 
-    int getHeroDmg(){
-        return (2 + heroLvl);
+   int getHeroDmg() {
+        if (currentWeapon.isBroken()) {
+            return 2 + heroLvl;
+        } else {
+            return currentWeapon.getDamage(heroLvl);
+        }
+    }
+
+
+    void equipWeapon(const weapon& w) {
+        currentWeapon = w;
+    }
+
+    weapon getWeapon() const {
+        return currentWeapon;
+    }
+
+
+    void useWeapon() {
+        currentWeapon.use();
     }
 
     void takeDamage(int dmg) {
@@ -93,6 +112,10 @@ public:
         saveFile << heroXP << "\n";
         saveFile << heroLvl << "\n";
         saveFile << heroGold << "\n";
+        saveFile << currentWeapon.getName() << "\n";
+        saveFile << currentWeapon.getBaseDamage() << "\n";
+        saveFile << currentWeapon.getStrengthModifier() << "\n";
+        saveFile << currentWeapon.getDurability() << "\n";
         saveFile.close();
         return true;
     } else {
@@ -124,6 +147,16 @@ public:
     std::getline(loadFile, line);
     heroGold = std::stoi(line);
 
+    std::string weaponName;
+    int baseDmg, strMod, durability;
+
+    std::getline(loadFile, weaponName);
+    std::getline(loadFile, line); baseDmg = std::stoi(line);
+    std::getline(loadFile, line); strMod = std::stoi(line);
+    std::getline(loadFile, line); durability = std::stoi(line);
+
+    currentWeapon = weapon(weaponName, baseDmg, strMod, durability);
+
     return true;
     };
 
@@ -136,6 +169,7 @@ private:
     double maxHP;
     int heroXP;
     int heroGold;
+    weapon currentWeapon;
 
 };
 
