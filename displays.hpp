@@ -3,6 +3,7 @@
 #include <vector>
 #include "hero.hpp"
 #include "enemy.hpp"
+#include "caveFactory.hpp"
 #include <iostream>
 #include <chrono>       //used for sleep
 #include <thread>       //used for sleep
@@ -64,14 +65,14 @@ void loadFailedMenu2() {
 bool loadMenu() {
     std::cout << "--------------" << std::endl;
     std::cout << " " << std::endl;
-    std::cout << "Type in the name of the game file you want to load (exclude '.txt'):" << std::endl;
+    std::cout << "Type in the name of the game file you want to load:" << std::endl;
 
     std::string folder = "saves";
     int count = 0;
 
     if (!std::filesystem::exists(folder)) {
         loadFailedMenu2();
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         return false;
     } else {
         std::vector<std::filesystem::directory_entry> entries;
@@ -90,7 +91,7 @@ bool loadMenu() {
 
         if (count == 0) {
             loadFailedMenu();
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             return false;
         }
     }
@@ -111,8 +112,12 @@ void startMenu(hero player){
 
 void mainMenu(hero player){
     std::cout << "--------------" << std::endl;
-    std::cout << player.getHeroName() << " is currently has: " << player.getXP() << "XP, at lvl: " << player.getLvl() <<std::endl;
+    std::cout << player.getHeroName() << " has: "
+          << player.getXP() << " XP | "
+          << "Gold: " << player.getGold() << " | "
+          << "Level: " << player.getLvl() << std::endl;
     std::cout << "(1) Fight monsters" << std::endl;
+    std::cout << "(2) Enter Cave" << std::endl;
     std::cout << "(0) Pause Menu" << std::endl;
     std::cout << " " << std::endl;
     std::cout << "--------------" << std::endl;
@@ -157,19 +162,11 @@ void pauseMenu(){
 void saveScreen(){
     std::cout << "--------------" << std::endl;
     std::cout << " GAME SAVED" << std::endl;
-    std::cout << "(1) Resume game" << std::endl;
-    std::cout << "(2) Save game" << std::endl;
-    std::cout << "(3) Load game" << std::endl;
-    std::cout << "(0) Exit Game" << std::endl;
     std::cout << "--------------" << std::endl;
 };
 void saveFailedScreen(){
     std::cout << "--------------" << std::endl;
     std::cout << " GAME FAILED TO SAVE" << std::endl;
-    std::cout << "(1) Resume game" << std::endl;
-    std::cout << "(2) Save game" << std::endl;
-    std::cout << "(3) Load game" << std::endl;
-    std::cout << "(0) Exit Game" << std::endl;
     std::cout << "--------------" << std::endl;
 };
 
@@ -182,7 +179,15 @@ void battleWon(enemy foe){
     std::cout << " " << std::endl;
     std::cout << "--------------" << std::endl;
 };
-
+void caveWon(Cave cave){
+    std::cout << "--------------" << std::endl;
+    std::cout << " " << std::endl;
+    std::cout << "    CONGRATS   " << std::endl;
+    std::cout << "You cleared the cave! " << cave.name 
+    << " Earning: " << cave.goldReward << " Gold" << std::endl;
+    std::cout << " " << std::endl;
+    std::cout << "--------------" << std::endl;
+};
 void battleLost(enemy foe){
     std::cout << "--------------" << std::endl;
     std::cout << " " << std::endl;
@@ -191,6 +196,19 @@ void battleLost(enemy foe){
     std::cout << " " << std::endl;
     std::cout << "--------------" << std::endl;
 };
+
+void showCaves(std::vector<Cave>& caves) {
+    std::cout << "--------------" << std::endl;
+    std::cout << "Available Caves:" << std::endl;
+    for (size_t i = 0; i < caves.size(); ++i) {
+        std::cout << "(" << i + 1 << ") " << caves[i].name
+                  << " | Enemies: " << caves[i].enemies.size()
+                  << " | Gold Reward: " << caves[i].goldReward << std::endl;
+    }
+    std::cout << "(0) You know what. Naaah" << std::endl;
+    std::cout << "--------------" << std::endl;
+}
+
 
 private:
 
