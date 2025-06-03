@@ -3,19 +3,21 @@
 #include "displays.hpp"
 #include "hero.hpp"
 #include "enemy.hpp"
+#include "caveFactory.hpp"
 displays menu;
 hero player;
+caveFactory factory;
 
-//Creating enemylist using a vectorlist.
+//Creating enemylist using a vectorlist. 
 std::vector<enemy> enemyList = {
     enemy("Hest", 1, 4, 100),//                 [0]
     enemy("Weak Goblin", 2, 4, 200),//          [1]
     enemy("Strong Goblin", 3, 8, 400),//        [2]
     enemy("Stronger Goblin", 4, 10, 500),//     [3]
-    enemy("Den stærkeste Goblin", 5, 15, 800),//[4]
+    enemy("Den staerkeste Goblin", 5, 15, 800),//[4]
     enemy("Abe Kongen", 5, 30, 1000),//         [5]
-    enemy("Enhjørning", 8, 5, 1500),//          [6]
-    enemy("Drage", 10, 100, 3000)//             [7]
+    enemy("Enhjeorning", 8, 5, 1500),//          [6]
+    enemy("Balrog", 10, 100, 3000)//             [7]
 };
 
 int selection;
@@ -30,10 +32,11 @@ bool load(){
         std::cin >> loadName;
             if(!player.loadHero(loadName)){
                 menu.loadFailedMenu();
-                std::this_thread::sleep_for(std::chrono::seconds(3));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
             } else {
                 menu.loadSuccessful();
-                std::this_thread::sleep_for(std::chrono::seconds(3));
+                player.resetHeroHealth();
+                std::this_thread::sleep_for(std::chrono::seconds(1));
                 return true;
             }
         } else {
@@ -57,13 +60,12 @@ void pause(){
             {
                 if (!player.saveHero()){
                     menu.saveFailedScreen();
-                    std::this_thread::sleep_for(std::chrono::seconds(3));
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
                     continue;
                 } else {
                     menu.saveScreen();
-                    std::this_thread::sleep_for(std::chrono::seconds(3));
-                    pauseRun = false;
-                    break;
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    continue;
                 }
             } 
             case 3:                     //Load Game
@@ -82,63 +84,68 @@ void pause(){
     return;
 };
 
-void postFight(bool battleWon, hero& player, enemy foe){
-    if(battleWon){
-        menu.battleWon(foe);
+void postFight(bool battleWon, hero& player, enemy& foe) {
+    if (battleWon) {
         player.addXP(foe.getEnemyXP());
-        player.getXP();
-        player.resetHeroHealth();
+        player.checkLevelUp();
+        menu.battleWon(foe);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     } else {
         menu.battleLost(foe);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
-void battle(hero& player, enemy foe){
+
+bool battle(hero& player, enemy foe) {
     bool battleRun = true;
     bool battleWon = false;
 
-    while (battleRun)
-    {
-        //Updating player and foe stats
-        int heroDmg = player.getHeroDmg();
-        int heroHP = player.getHeroHP();
-        int enemyDmg = foe.getEnemyDmg();
-        int enemyHP = foe.getEnemyHP();
+    while (battleRun) {
         menu.battleMenu(player, foe);
         std::cin >> selection;
-        switch (selection)
-        {
-        case 1:                         //Attack
-            foe.takeDamage(player.getHeroDmg());
-            if (foe.getEnemyHP() <= 0){
-                battleWon = true;
-                    battleRun = false;
-            };
 
-            player.takeDamage(foe.getEnemyDmg());
-            if (player.getHeroHP() <= 0) {
+        switch (selection) {
+            case 1: // Attack
+                foe.takeDamage(player.getHeroDmg());
+                if (foe.getEnemyHP() <= 0) {
+                    battleWon = true;
+                    battleRun = false;
+                    continue;
+                }
+
+                player.takeDamage(foe.getEnemyDmg());
+                if (player.getHeroHP() <= 0) {
                     battleWon = false;
                     battleRun = false;
-            };
+                }
+                break;
 
-            continue;
-        case 2:                         //Flee
-            battleRun = false;
-            continue;
-        case 3:                         //Do nothing (This is for debugging)
-            player.takeDamage(foe.getEnemyDmg());
-            if (player.getHeroHP() <= 0) {
+            case 2: // Flee
+                battleRun = false;
+                break;
+
+            case 3: // Do nothing (debug)
+                player.takeDamage(foe.getEnemyDmg());
+                if (player.getHeroHP() <= 0) {
                     battleWon = false;
                     battleRun = false;
-            };
-            continue;
-        default:
-            continue;
+                }
+                break;
+
+            case 0: // Pause
+                pause();
+                break;
+
+            default:
+                break;
         }
     }
+
     postFight(battleWon, player, foe);
-    return;
+    return battleWon;
 }
+
 
 void fightMonsters() {
     bool fightRun = true;
@@ -159,7 +166,46 @@ void fightMonsters() {
             continue;
         }
     }
+    player.resetHeroHealth();
 }
+
+void enterCave() {
+    std::vector<Cave> caves;
+
+    for (int i = 0; i < 8; ++i) {
+        caves.push_back(factory.createCave(player, enemyList, i));
+    }
+
+    bool enterCaveRun = true;
+    while (enterCaveRun) {
+        menu.showCaves(caves);
+        std::cin >> selection;
+
+        if (selection == 0) return;
+
+        if (selection > 0 && selection <= caves.size()) {
+            Cave chosen = caves[selection - 1];
+            bool cleared = true;
+
+            for (int i = 0; i < chosen.enemies.size(); ++i) {
+                if (!battle(player, chosen.enemies[i]) || player.getHeroHP() <= 0) {
+                    cleared = false;
+                    break;
+                }
+            }
+
+            if (cleared) {
+                player.addGold(chosen.goldReward);
+                menu.caveWon(chosen);
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+
+            enterCaveRun = false;
+        }
+    }
+    player.resetHeroHealth();
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -195,12 +241,12 @@ int main(int argc, char *argv[])
 
             default:
                 menu.bootMenuDefault();
-                std::this_thread::sleep_for(std::chrono::seconds(3));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
         };
     }
     
 
-    //Playing game
+    //Playing game (mainMenu)
     running = true;
     while (running)
     {
@@ -213,7 +259,11 @@ int main(int argc, char *argv[])
                 fightMonsters();
                 continue;
             }
-                
+            case 2:
+            {
+                enterCave();
+                continue;
+            }
             case 0:
             {
                 pause();
