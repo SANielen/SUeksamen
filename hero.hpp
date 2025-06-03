@@ -61,7 +61,28 @@ public:
         return heroXP;
     }
 
+    bool loadHero(std::string loadName) {
+    std::string filename = "saves/" + loadName + ".txt";
+    std::ifstream loadFile(filename);
 
+    if (!loadFile.is_open()) {
+        //std::cerr << "Error: Could not open save file: " << filename << std::endl;
+        return false;
+    }
+
+    std::string line;
+    
+    std::getline(loadFile, line);
+    heroName = line;
+
+    std::getline(loadFile, line);
+    heroXP = std::stoi(line);
+
+    std::getline(loadFile, line);
+    heroLvl = std::stoi(line);
+
+    return true;
+    };
 
 private:
 
