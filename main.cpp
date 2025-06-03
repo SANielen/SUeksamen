@@ -8,7 +8,7 @@ displays menu;
 hero player;
 caveFactory factory;
 
-//Creating enemylist using a vectorlist. 
+//Creating enemylist using a vectorlist.
 std::vector<enemy> enemyList = {
     enemy("Hest", 1, 4, 100),//                 [0]
     enemy("Weak Goblin", 2, 4, 200),//          [1]
@@ -281,6 +281,11 @@ int main(int argc, char *argv[])
                 continue;
             }
             case 2:
+            {
+                enterCave();
+                continue;
+            }
+            case 3:
             {
                 enterCave();
                 continue;
