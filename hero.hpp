@@ -129,7 +129,6 @@ public:
     std::ifstream loadFile(filename);
 
     if (!loadFile.is_open()) {
-        //std::cerr << "Error: Could not open save file: " << filename << std::endl;
         return false;
     }
 
@@ -155,10 +154,16 @@ public:
     std::getline(loadFile, line); strMod = std::stoi(line);
     std::getline(loadFile, line); durability = std::stoi(line);
 
-    currentWeapon = weapon(weaponName, baseDmg, strMod, durability);
+    if (weaponName.empty() || baseDmg < 0 || durability < 0) {
+        std::cerr << "Invalid weapon data loaded. Using default weapon.\n";
+        currentWeapon = weapon(); // fallback
+    } else {
+        currentWeapon = weapon(weaponName, baseDmg, strMod, durability); // good path
+    }
 
     return true;
-    };
+    }
+
 
 private:
 

@@ -252,6 +252,7 @@ CMakeFiles/main.dir/main.cpp.o: ../main.cpp \
   /usr/include/c++/11/ext/aligned_buffer.h \
   /usr/include/c++/11/bits/fs_dir.h \
   /usr/include/c++/11/bits/fs_ops.h \
+  ../weapon.hpp \
   ../enemy.hpp \
   ../caveFactory.hpp \
   /usr/include/c++/11/thread \
@@ -518,6 +519,8 @@ CMakeFiles/main.dir/main.cpp.o: ../main.cpp \
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+
+../weapon.hpp:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
