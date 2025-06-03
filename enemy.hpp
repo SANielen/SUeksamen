@@ -5,6 +5,7 @@
 
 class enemy {
 public:
+
     //Constructor with initializer, to create different types of enemies
     enemy(std::string name, int dmg, int hp, int xp)
         : enemyName(name), enemyDmg(dmg), enemyHP(hp), enemyXP(xp) {}
@@ -36,8 +37,8 @@ public:
 
 private:
     std::string enemyName;
-    int enemyDmg;
-    int enemyHP;
+    double enemyDmg;
+    double enemyHP;
     int enemyXP;
 };
 

@@ -11,12 +11,14 @@ public:
     const int starterHP = 10;
     const int starterDmg = 2;
     const int starterLvl = 0;
+    const int starterGold = 0;
 
     hero() {
     heroHP = starterHP;
     heroLvl = starterLvl;
     heroDmg = starterDmg + heroLvl;
     maxHP = starterHP + (2 * heroLvl);
+    heroGold = starterGold;
     }
 
     void setName(std::string hName){
@@ -28,6 +30,10 @@ public:
     }
 
     int getLvl(){
+        return heroLvl;
+    }
+
+    int getLvl() const{
         return heroLvl;
     }
 
@@ -51,18 +57,28 @@ public:
         heroXP += xp;
     }
 
-    int getXP(){
-        if (heroXP >= 1000)
-        {
-            ++heroLvl;
-            heroXP -= 1000;
-        }
-        
+    int getXP() const {
         return heroXP;
     }
 
+    void checkLevelUp() {
+        while (heroXP >= 1000) {
+            heroXP -= 1000;
+            heroLvl++;
+        }
+    }
+
+
     void resetHeroHealth(){
         heroHP = getMaxHP();
+    }
+
+    int getGold() {
+        return heroGold;
+    }
+
+    void addGold(int amount) {
+        heroGold += amount;
     }
 
     bool saveHero() {
@@ -76,6 +92,7 @@ public:
         saveFile << heroName << "\n";
         saveFile << heroXP << "\n";
         saveFile << heroLvl << "\n";
+        saveFile << heroGold << "\n";
         saveFile.close();
         return true;
     } else {
@@ -104,17 +121,21 @@ public:
     std::getline(loadFile, line);
     heroLvl = std::stoi(line);
 
+    std::getline(loadFile, line);
+    heroGold = std::stoi(line);
+
     return true;
     };
 
 private:
 
     std::string heroName;
-    int heroHP;
+    double heroHP;
     int heroLvl;
-    int heroDmg;
-    int maxHP;
+    double heroDmg;
+    double maxHP;
     int heroXP;
+    int heroGold;
 
 };
 
